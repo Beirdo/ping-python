@@ -103,6 +103,7 @@ import os
 import types
 import struct
 import socket
+import traceback
 
 class PingService(object):
     """Send out icmp ping requests at 'delay' intervals and
@@ -157,6 +158,14 @@ class PingService(object):
         if not self.verbose:
             msg = time.strftime("%H:%M:%S ") + msg
         self.msgs.append(msg)
+
+    def __enter__(self):
+        self.start()
+
+    def __exit__(self, t, v, tb):
+        if t is not None:
+            traceback.print_exception(t, v, tb)
+        self.stop()
 
     def start(self):
         self.seq = 0
