@@ -133,9 +133,10 @@ class PingService(object):
     # provide a class-wide thread-safe message queue
     msgs = []
 
-    def __init__(self, host, delay=1.0, its_dead_jim=4,
+    def __init__(self, host, source="0.0.0.0", delay=1.0, its_dead_jim=4,
                  verbose=True, persistent=False):
         self.host = host
+        self.source = source
         self.delay = delay
         self.verbose = verbose
         self.persistent = persistent
@@ -147,6 +148,7 @@ class PingService(object):
         self._isup = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW,
                                   socket.getprotobyname('icmp'))
+        self.sock.bind((source,0))
         try:
             self.sock.connect((host, 22))
         except socket.gaierror, ex:
